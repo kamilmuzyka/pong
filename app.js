@@ -20,18 +20,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Ball
     const ballSize = cw * 0.02;
-    const ballX = (cw / 2) - (ballSize / 2);
-    const ballY = (ch / 2) - (ballSize / 2);
+    let ballX = (cw / 2) - (ballSize / 2);
+    let ballY = (ch / 2) - (ballSize / 2);
+    const velocityRateX = 0.001;
+    const velocityRateY = 0.0017;
+    let velocityIncrease = 5;
+    let ballXV = cw * velocityRateX * velocityIncrease; // Velocity X
+    let ballYV = ch * velocityRateY * velocityIncrease; // Velocity Y
+
 
     // Rackets
     const racketWidth = cw * 0.02;
     const racketHeight = ch * 0.2;
 
     const playerX = cw * 0.07;
-    const playerY = (ch / 2) - (racketHeight / 2);
+    let playerY = (ch / 2) - (racketHeight / 2);
 
     const computerX = cw - (cw * 0.07 + racketWidth);
-    const computerY = (ch / 2) - (racketHeight / 2);
+    let computerY = (ch / 2) - (racketHeight / 2);
 
     /* 
      * Functions
@@ -49,6 +55,16 @@ document.addEventListener('DOMContentLoaded', function () {
     function ball() {
         ctx.fillStyle = "#FFFFFF";
         ctx.fillRect(ballX, ballY, ballSize, ballSize);
+
+        ballX += ballXV;
+        ballY += ballYV;
+
+        if (ballY <= 0 || ballY + ballSize >= ch) {
+            ballYV = -ballYV;
+        } else if (ballX <= 0 || ballX + ballSize >= cw) {
+            ballXV = -ballXV;
+        }
+
     }
 
     function player() {
@@ -56,13 +72,29 @@ document.addEventListener('DOMContentLoaded', function () {
         ctx.fillRect(playerX, playerY, racketWidth, racketHeight);
     }
 
+    function playerPosition(e) {
+        playerY = e.offsetY - racketHeight / 2;
+
+        if (playerY >= ch - racketHeight) {
+            playerY = ch - racketHeight;
+        } else if (playerY <= 0) {
+            playerY = 0;
+        }
+    }
+
     function computer() {
         ctx.fillStyle = "#FFFFFF";
         ctx.fillRect(computerX, computerY, racketWidth, racketHeight);
     }
 
-    table();
-    ball();
-    player();
-    computer();
+    function game() {
+        requestAnimationFrame(game);
+        table();
+        ball();
+        player();
+        computer();
+    }
+
+    canvas.addEventListener('mousemove', playerPosition);
+    game();
 });
