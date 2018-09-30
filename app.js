@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-
     /* 
      * Initial Values
      */
@@ -28,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let ballXV = cw * velocityRateX * velocityIncrease; // Velocity X
     let ballYV = ch * velocityRateY * velocityIncrease; // Velocity Y
 
-
     // Rackets
     const racketWidth = cw * 0.02;
     const racketHeight = ch * 0.2;
@@ -43,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
      * Functions
      */
 
+    // Draw Table
     function table() {
         ctx.fillStyle = "#000000";
         ctx.fillRect(0, 0, cw, ch);
@@ -52,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Draw Ball, Collision detection
     function ball() {
         ctx.fillStyle = "#FFFFFF";
         ctx.fillRect(ballX, ballY, ballSize, ballSize);
@@ -62,12 +62,37 @@ document.addEventListener('DOMContentLoaded', function () {
         if (ballY <= 0 || ballY + ballSize >= ch) {
             ballYV = -ballYV;
             updateVelocity();
-        } else if (ballX <= 0 || ballX + ballSize >= cw) {
+        }
+
+        // Ball-Wall collision at X axis
+        // if (ballX <= 0 || ballX + ballSize >= cw) {
+        //     ballXV = -ballXV;
+        //     updateVelocity();
+        // }
+
+        // Ball-Racket collision
+        if (
+            ballX <= playerX + racketWidth &&
+            ballX > playerX &&
+            ballY >= playerY - ballSize &&
+            ballY <= playerY + racketHeight + ballSize
+        ) {
+            ballX = playerX + racketWidth;
+            ballXV = -ballXV;
+            updateVelocity();
+        } else if (
+            ballX >= computerX &&
+            ballX < computerX + racketWidth &&
+            ballY >= computerY - ballSize &&
+            ballY <= computerY + racketHeight + ballSize
+        ) {
+            ballX = computerX - racketWidth;
             ballXV = -ballXV;
             updateVelocity();
         }
     }
 
+    // Update velocity 
     function updateVelocity() {
         if (ballXV > 0 && ballXV < cw * 0.015) {
             ballXV += cw * 0.0001;
@@ -82,11 +107,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Draw player's racket
     function player() {
         ctx.fillStyle = "#FFFFFF";
         ctx.fillRect(playerX, playerY, racketWidth, racketHeight);
     }
 
+    // Update player's racket position
     function playerPosition(e) {
         playerY = e.offsetY - racketHeight / 2;
 
@@ -95,21 +122,45 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (playerY <= 0) {
             playerY = 0;
         }
-
-        computerY = playerY;
     }
 
+    // Draw computer's racket
     function computer() {
         ctx.fillStyle = "#FFFFFF";
         ctx.fillRect(computerX, computerY, racketWidth, racketHeight);
     }
 
+    // Update computer's racket position
+    function computerPosition() {
+        const middleComputerY = computerY + racketHeight / 2;
+        const middleBallY = ballY + ballSize / 2;
+        if (ballX > cw / 2) {
+            if (middleComputerY - middleBallY > ch * 0.35) {
+                computerY -= ch * 0.028;
+            } else if (middleComputerY - middleBallY > ch * 0.1) {
+                computerY -= ch * 0.012;
+            } else if (middleComputerY - middleBallY < -(ch * 0.35)) {
+                computerY += ch * 0.028;
+            } else if (middleComputerY - middleBallY < -(ch * 0.1)) {
+                computerY += ch * 0.012;
+            }
+        } else if (ballX <= cw / 2 && ballX > racketWidth + playerX) {
+            if (middleComputerY - middleBallY > ch * 0.2) {
+                computerY -= ch * 0.005;
+            } else if (middleComputerY - middleBallY < ch * 0.2) {
+                computerY += ch * 0.005;
+            }
+        }
+    }
+
+    // Load game
     function game() {
         requestAnimationFrame(game);
         table();
         ball();
         player();
         computer();
+        computerPosition();
     }
 
     canvas.addEventListener('mousemove', playerPosition);
