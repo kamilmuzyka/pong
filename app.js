@@ -61,10 +61,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (ballY <= 0 || ballY + ballSize >= ch) {
             ballYV = -ballYV;
+            updateVelocity();
         } else if (ballX <= 0 || ballX + ballSize >= cw) {
             ballXV = -ballXV;
+            updateVelocity();
+        }
+    }
+
+    function updateVelocity() {
+        if (ballXV > 0 && ballXV < cw * 0.015) {
+            ballXV += cw * 0.0001;
+        } else if (ballXV < 0 && ballXV > -cw * 0.015) {
+            ballXV -= cw * 0.0001;
         }
 
+        if (ballYV > 0 && ballYV < ch * 0.015) {
+            ballYV += ch * 0.0001;
+        } else if (ballYV < 0 && ballYV > -ch * 0.015) {
+            ballYV -= ch * 0.0001;
+        }
     }
 
     function player() {
@@ -80,6 +95,8 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (playerY <= 0) {
             playerY = 0;
         }
+
+        computerY = playerY;
     }
 
     function computer() {
