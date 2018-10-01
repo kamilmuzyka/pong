@@ -21,8 +21,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const ballSize = cw * 0.02;
     let ballX = (cw / 2) - (ballSize / 2);
     let ballY = (ch / 2) - (ballSize / 2);
-    const velocityRateX = 0.001;
-    const velocityRateY = 0.0017;
+
+    const signs = [true, false];
+
+    function randomSign(signs) {
+        const index = Math.floor(Math.random() * signs.length);
+        return signs[index];
+    }
+
+    const signX = randomSign(signs) ? "+" : "-";
+    const signY = randomSign(signs) ? "+" : "-";
+
+    const velocityRateX = Number(signX + (Math.random() + 0.5) * 0.0013);
+    const velocityRateY = Number(signY + (Math.random() + 0.5) * 0.0013);
     let velocityIncrease = 5;
     let ballXV = cw * velocityRateX * velocityIncrease; // Velocity X
     let ballYV = ch * velocityRateY * velocityIncrease; // Velocity Y
@@ -75,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ballX <= playerX + racketWidth &&
             ballX > playerX &&
             ballY >= playerY - ballSize &&
-            ballY <= playerY + racketHeight + ballSize
+            ballY <= playerY + racketHeight
         ) {
             ballX = playerX + racketWidth;
             ballXV = -ballXV;
@@ -84,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ballX >= computerX &&
             ballX < computerX + racketWidth &&
             ballY >= computerY - ballSize &&
-            ballY <= computerY + racketHeight + ballSize
+            ballY <= computerY + racketHeight
         ) {
             ballX = computerX - racketWidth;
             ballXV = -ballXV;
@@ -95,15 +106,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // Update velocity 
     function updateVelocity() {
         if (ballXV > 0 && ballXV < cw * 0.015) {
-            ballXV += cw * 0.0001;
+            ballXV += cw * 0.00012;
         } else if (ballXV < 0 && ballXV > -cw * 0.015) {
-            ballXV -= cw * 0.0001;
+            ballXV -= cw * 0.00012;
         }
 
         if (ballYV > 0 && ballYV < ch * 0.015) {
-            ballYV += ch * 0.0001;
+            ballYV += ch * 0.00012;
         } else if (ballYV < 0 && ballYV > -ch * 0.015) {
-            ballYV -= ch * 0.0001;
+            ballYV -= ch * 0.00012;
         }
     }
 
@@ -138,11 +149,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (middleComputerY - middleBallY > ch * 0.35) {
                 computerY -= ch * 0.028;
             } else if (middleComputerY - middleBallY > ch * 0.1) {
-                computerY -= ch * 0.012;
+                computerY -= ch * 0.018;
             } else if (middleComputerY - middleBallY < -(ch * 0.35)) {
                 computerY += ch * 0.028;
             } else if (middleComputerY - middleBallY < -(ch * 0.1)) {
-                computerY += ch * 0.012;
+                computerY += ch * 0.018;
             }
         } else if (ballX <= cw / 2 && ballX > racketWidth + playerX) {
             if (middleComputerY - middleBallY > ch * 0.2) {
