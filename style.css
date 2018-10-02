@@ -8,6 +8,15 @@
     padding: 0;
 }
 
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style-type: none;
+}
+
 body {
     width: 100%;
     height: 100vh;
@@ -15,8 +24,55 @@ body {
     justify-content: center;
     align-items: center;
     background-color: #F1F1F1;
+    font-family: 'Pixel', sans-serif;
+    text-align: center;
+    color: #FFFFFF;
 }
 
 #canvas {
-    cursor: none;
+    display: block;
+}
+
+#game {
+    position: relative;
+}
+
+.menu {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 1);
+    display: none;
+}
+
+.menu__window {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+.heading {
+    font-size: 36px;
+}
+
+.navigation {
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+.navigation__item {
+    margin-top: 10px;
+}
+
+.navigation__link {
+    display: block;
+}
+
+.open,
+.active {
+    display: block;
 }

@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth * 0.625;
+    // canvas.width = window.innerWidth * 0.625;
+    canvas.width = 900;
     canvas.height = Math.round(canvas.width / 1.618033);
     const cw = canvas.width;
     const ch = canvas.height;
@@ -198,6 +199,10 @@ document.addEventListener('DOMContentLoaded', function () {
      * Game control
      */
 
+    // Game control variables
+    let gameInterval;
+    let gameStatus;
+
     // Update score
     let userScore = 0;
     let computerScore = 0;
@@ -220,7 +225,12 @@ document.addEventListener('DOMContentLoaded', function () {
         updateScore();
     }
 
-    let gameInterval = setInterval(game, 1000 / 60);
+    // Start game
+    function start() {
+        gameStatus = "playing";
+        menu.classList.remove('open');
+        gameInterval = setInterval(game, 1000 / 60);
+    }
 
     // Restart game
     function restart() {
@@ -229,15 +239,81 @@ document.addEventListener('DOMContentLoaded', function () {
         userScore = 0;
         computerScore = 0;
         setBallFactors();
+        gameStatus = "playing";
+        menu.classList.remove('open');
+        gameInterval = setInterval(game, 1000 / 60);
     }
 
     // Pause game
     function pause() {
+        gameStatus = "paused";
         clearInterval(gameInterval);
     }
 
     // Resume game
     function resume() {
+        gameStatus = "playing";
         gameInterval = setInterval(game, 1000 / 60);
     }
+
+    // Open scores 
+    function scores() {
+        console.log('Scores');
+    }
+
+    // Open settings
+    function settings() {
+        console.log('Settings');
+    }
+
+    /* 
+     * DOM control
+     */
+
+    const menu = document.querySelector('.menu');
+    const linksNodelist = document.querySelectorAll('.navigation__link');
+    const links = [...linksNodelist];
+    const windows = document.querySelectorAll('.menu__window');
+
+    // Assign functions to links
+    links.forEach(link => {
+        const dataset = link.dataset.fn;
+
+        if (dataset === "start") {
+            fn = start;
+        } else if (dataset === "scores") {
+            fn = scores;
+        } else if (dataset === "settings") {
+            fn = settings;
+        } else if (dataset === "restart") {
+            fn = restart;
+        }
+
+        link.addEventListener('click', fn);
+    });
+
+    // Handle ESC
+    function handleEscape(e) {
+        if (e.keyCode === 27 && gameStatus === "playing") {
+            pause();
+            windows.forEach(window => {
+                window.classList.remove('active');
+                if (window.dataset.window === "pause") {
+                    menu.classList.add('open');
+                    window.classList.add('active');
+                }
+            });
+        } else if (e.keyCode === 27 && gameStatus === "paused") {
+            resume();
+            windows.forEach(window => {
+                window.classList.remove('active');
+                if (window.dataset.window === "pause") {
+                    menu.classList.remove('open');
+                    window.classList.remove('active');
+                }
+            });
+        }
+    }
+
+    window.addEventListener('keydown', handleEscape);
 });
