@@ -12,33 +12,14 @@
 <body>
     <div id="game">
         <canvas id="canvas"></canvas>
-
         <div class="menu open">
-            <div class="menu__window active" data-window="start">
+            <div class="menu__window menu__window--opaque" data-window="start">
                 <h1 class="heading">Pong</h1>
                 <ul class="navigation">
                     <li class="navigation__item"><a class="navigation__link" data-fn="start" href="#">Start</a></li>
                     <li class="navigation__item"><a class="navigation__link" data-fn="scores" href="#">Scores</a></li>
                     <li class="navigation__item"><a class="navigation__link" data-fn="settings" href="#">Settings</a></li>
                 </ul>
-            </div>
-
-            <div class="menu__window" data-window="pause">
-                <h2 class="heading">Pause</h2>
-                <ul class="navigation">
-                    <li class="navigation__item"><a class="navigation__link" data-fn="start" href="#">Resume</a></li>
-                    <li class="navigation__item"><a class="navigation__link" data-fn="scores" href="#">Scores</a></li>
-                    <li class="navigation__item"><a class="navigation__link" data-fn="settings" href="#">Settings</a></li>
-                    <li class="navigation__item"><a class="navigation__link" data-fn="restart" href="#">Restart</a></li>
-                </ul>
-            </div>
-
-            <div class="menu__window" data-window="scores">
-                <h2 class="heading">Scores</h2>
-            </div>
-
-            <div class="menu__window" data-window="settings">
-                <h2 class="heading">Settings</h2>
             </div>
         </div>
     </div>

@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const dashWidth = cw * 0.006;
     const dashHeight = ch * 0.025;
 
+    // Draw table
     function table() {
         ctx.fillStyle = "#000000";
         ctx.fillRect(0, 0, cw, ch);
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Check ball's collision
     function checkCollision() {
 
-        // Wall collision at X axis
+        // Wall collision on the X axis
         if (ballX <= 0) {
             computerScore++;
             setBallFactors();
@@ -56,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setBallFactors();
         }
 
-        // Wall collision at Y axis
+        // Wall collision on the Y axis
         if (ballY <= 0 || ballY + ballSize >= ch) {
             ballYV = -ballYV;
             updateVelocity();
@@ -196,12 +197,50 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* 
+     * DOM Elements
+     */
+
+    // Menu Element
+    const menu = document.querySelector('.menu');
+    let opaque = '';
+
+    // Handle Menu (Event Bubbling)
+    function handleMenu(e) {
+        if (e.target.tagName === "A") {
+            const fn = e.target.dataset.fn;
+            if (fn === "start") {
+                start();
+            } else if (fn === "scores") {
+                scores();
+            } else if (fn === "settings") {
+                settings();
+            } else if (fn === "restart") {
+                restart();
+            }
+        }
+    }
+
+    menu.addEventListener('click', handleMenu);
+
+    // Handle ESC
+    function handleEscape(e) {
+        if (e.keyCode === 27 && gameStatus === "playing") {
+            pause();
+        } else if (e.keyCode === 27 && gameStatus === "paused") {
+            resume();
+        }
+    }
+
+    window.addEventListener('keydown', handleEscape);
+
+    /* 
      * Game control
      */
 
     // Game control variables
     let gameInterval;
     let gameStatus;
+    let gameStarted = false;
 
     // Update score
     let userScore = 0;
@@ -227,8 +266,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Start game
     function start() {
+        gameStarted = true;
         gameStatus = "playing";
         menu.classList.remove('open');
+        menu.innerHTML = ``;
         gameInterval = setInterval(game, 1000 / 60);
     }
 
@@ -241,79 +282,53 @@ document.addEventListener('DOMContentLoaded', function () {
         setBallFactors();
         gameStatus = "playing";
         menu.classList.remove('open');
+        menu.innerHTML = ``;
         gameInterval = setInterval(game, 1000 / 60);
     }
 
     // Pause game
     function pause() {
         gameStatus = "paused";
+        menu.classList.add('open');
+        menu.innerHTML = `
+            <div class="menu__window" data-window="pause">
+                <h2 class="heading">Pause</h2>
+                <ul class="navigation">
+                    <li class="navigation__item"><a class="navigation__link" data-fn="start" href="#">Resume</a></li>
+                    <li class="navigation__item"><a class="navigation__link" data-fn="scores" href="#">Scores</a></li>
+                    <li class="navigation__item"><a class="navigation__link" data-fn="settings" href="#">Settings</a></li>
+                    <li class="navigation__item"><a class="navigation__link" data-fn="restart" href="#">Restart</a></li>
+                </ul>
+            </div>
+        `;
         clearInterval(gameInterval);
     }
 
     // Resume game
     function resume() {
         gameStatus = "playing";
+        menu.classList.remove('open');
+        menu.innerHTML = ``;
         gameInterval = setInterval(game, 1000 / 60);
     }
 
     // Open scores 
     function scores() {
-        console.log('Scores');
+        if (!gameStarted) opaque = 'menu__window--opaque';
+        menu.innerHTML = `
+            <div class="menu__window ${opaque}" data-window="scores">
+                <h2 class="heading">Scores</h2>
+            </div>
+        `;
     }
 
     // Open settings
     function settings() {
-        console.log('Settings');
+        if (!gameStarted) opaque = 'menu__window--opaque';
+        menu.innerHTML = `
+            <div class="menu__window ${opaque}" data-window="settings">
+                <h2 class="heading">Settings</h2>
+            </div>
+        `;
     }
-
-    /* 
-     * DOM control
-     */
-
-    const menu = document.querySelector('.menu');
-    const linksNodelist = document.querySelectorAll('.navigation__link');
-    const links = [...linksNodelist];
-    const windows = document.querySelectorAll('.menu__window');
-
-    // Assign functions to links
-    links.forEach(link => {
-        const dataset = link.dataset.fn;
-
-        if (dataset === "start") {
-            fn = start;
-        } else if (dataset === "scores") {
-            fn = scores;
-        } else if (dataset === "settings") {
-            fn = settings;
-        } else if (dataset === "restart") {
-            fn = restart;
-        }
-
-        link.addEventListener('click', fn);
-    });
-
-    // Handle ESC
-    function handleEscape(e) {
-        if (e.keyCode === 27 && gameStatus === "playing") {
-            pause();
-            windows.forEach(window => {
-                window.classList.remove('active');
-                if (window.dataset.window === "pause") {
-                    menu.classList.add('open');
-                    window.classList.add('active');
-                }
-            });
-        } else if (e.keyCode === 27 && gameStatus === "paused") {
-            resume();
-            windows.forEach(window => {
-                window.classList.remove('active');
-                if (window.dataset.window === "pause") {
-                    menu.classList.remove('open');
-                    window.classList.remove('active');
-                }
-            });
-        }
-    }
-
-    window.addEventListener('keydown', handleEscape);
 });
