@@ -54,6 +54,13 @@ document.addEventListener('DOMContentLoaded', function () {
             setBallFactors();
         } else if (ballX + ballSize >= cw) {
             userScore++;
+            gameData.goals++;
+            if (userScore - computerScore > gameData.difference[2]) {
+                gameData.difference[0] = userScore;
+                gameData.difference[1] = computerScore;
+                gameData.difference[2] = userScore - computerScore;
+            }
+            updateLocalStorage();
             setBallFactors();
         }
 
@@ -245,6 +252,15 @@ document.addEventListener('DOMContentLoaded', function () {
     let gameInterval;
     let gameStatus;
     let gameStarted = false;
+    const gameData = JSON.parse(localStorage.getItem('gameData')) || {
+        goals: 0,
+        difference: [0, 0, 0]
+    }
+
+    // Update local storage
+    function updateLocalStorage() {
+        localStorage.setItem('gameData', JSON.stringify(gameData));
+    }
 
     // Update score
     let userScore = 0;
@@ -343,6 +359,10 @@ document.addEventListener('DOMContentLoaded', function () {
         menu.innerHTML = `
             <div class="menu__window ${opaque}" data-window="scores">
                 <h2 class="heading">Scores</h2>
+                <ul class="scores">
+                    <li>Total Goals: ${gameData.goals}</li>
+                    <li>The Highest Difference: ${gameData.difference[2]} (${gameData.difference[0]} to ${gameData.difference[1]})</li>
+                </ul>
                 <ul class="navigation">
                     <li class="navigation__item"><a class="navigation__link" data-fn=${backTo} href="#">Exit</a></li>
                 </ul>
