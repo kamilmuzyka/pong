@@ -210,12 +210,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const fn = e.target.dataset.fn;
             if (fn === "start") {
                 start();
+            } else if (fn === "main") {
+                main();
             } else if (fn === "scores") {
                 scores();
             } else if (fn === "settings") {
                 settings();
             } else if (fn === "restart") {
                 restart();
+            } else if (fn === "pause") {
+                pause();
             }
         }
     }
@@ -312,22 +316,56 @@ document.addEventListener('DOMContentLoaded', function () {
         gameInterval = setInterval(game, 1000 / 60);
     }
 
+    // Render main menu
+    function main() {
+        menu.innerHTML = `
+            <div class="menu__window menu__window--opaque" data-window="start">
+                <h1 class="heading">Pong</h1>
+                <ul class="navigation">
+                    <li class="navigation__item"><a class="navigation__link" data-fn="start" href="#">Start</a></li>
+                    <li class="navigation__item"><a class="navigation__link" data-fn="scores" href="#">Scores</a></li>
+                    <li class="navigation__item"><a class="navigation__link" data-fn="settings" href="#">Settings</a></li>
+                </ul>
+            </div>
+        `;
+    }
+
     // Open scores 
     function scores() {
-        if (!gameStarted) opaque = 'menu__window--opaque';
+        let backTo = 'pause';
+        opaque = '';
+
+        if (!gameStarted) {
+            backTo = 'main';
+            opaque = 'menu__window--opaque';
+        }
+
         menu.innerHTML = `
             <div class="menu__window ${opaque}" data-window="scores">
                 <h2 class="heading">Scores</h2>
+                <ul class="navigation">
+                    <li class="navigation__item"><a class="navigation__link" data-fn=${backTo} href="#">Exit</a></li>
+                </ul>
             </div>
         `;
     }
 
     // Open settings
     function settings() {
-        if (!gameStarted) opaque = 'menu__window--opaque';
+        let backTo = 'pause';
+        opaque = '';
+
+        if (!gameStarted) {
+            backTo = 'main';
+            opaque = 'menu__window--opaque';
+        }
+
         menu.innerHTML = `
             <div class="menu__window ${opaque}" data-window="settings">
                 <h2 class="heading">Settings</h2>
+                <ul class="navigation">
+                    <li class="navigation__item"><a class="navigation__link" data-fn=${backTo} href="#">Exit</a></li>
+                </ul>
             </div>
         `;
     }
