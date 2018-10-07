@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial ball's direction and velocity
     let directionX, directionY, velocityRateX, velocityRateY, ballXV, ballYV;
-    const velocityIncrease = 5;
+    const velocityIncrease = 4;
     const signs = [true, false];
 
     function setBallFactors() {
@@ -97,8 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
         directionX = signs[Math.round(Math.random())] ? "+" : "-";
         directionY = signs[Math.round(Math.random())] ? "+" : "-";
 
-        velocityRateX = Number(directionX + (0.001 + Math.random() * 0.0004));
-        velocityRateY = Number(directionY + (0.001 + Math.random() * 0.0004));
+        velocityRateX = Number(directionX + (Math.random() * (0.0015 - 0.001) + 0.001));
+        velocityRateY = Number(directionY + (Math.random() * (0.0015 - 0.0001) + 0.0001));
 
         ballXV = cw * velocityRateX * velocityIncrease;
         ballYV = ch * velocityRateY * velocityIncrease;
@@ -108,16 +108,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Update ball's velocity on collision
     function updateVelocity() {
-        if (ballXV > 0 && ballXV < cw * 0.015) {
-            ballXV += cw * 0.00025;
-        } else if (ballXV < 0 && ballXV > -cw * 0.015) {
-            ballXV -= cw * 0.00025;
+        if (ballXV > 0 && ballXV < cw * 0.01) {
+            ballXV += cw * 0.00031;
+        } else if (ballXV < 0 && ballXV > -cw * 0.01) {
+            ballXV -= cw * 0.00031;
         }
 
-        if (ballYV > 0 && ballYV < ch * 0.015) {
-            ballYV += ch * 0.00025;
-        } else if (ballYV < 0 && ballYV > -ch * 0.015) {
-            ballYV -= ch * 0.00025;
+        if (ballYV > 0 && ballYV < ch * 0.01) {
+            ballYV += ch * 0.00031;
+        } else if (ballYV < 0 && ballYV > -ch * 0.01) {
+            ballYV -= ch * 0.00031;
         }
     }
 
@@ -179,13 +179,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const middleBallY = ballY + ballSize / 2;
         if (ballX > cw / 2) {
             if (middleComputerY - middleBallY > ch * 0.35) {
-                computerY -= ch * 0.028;
+                computerY -= ch * 0.023;
             } else if (middleComputerY - middleBallY > ch * 0.1) {
-                computerY -= ch * 0.018;
+                computerY -= ch * 0.014;
             } else if (middleComputerY - middleBallY < -(ch * 0.35)) {
-                computerY += ch * 0.028;
-            } else if (middleComputerY - middleBallY < -(ch * 0.1)) {
                 computerY += ch * 0.018;
+            } else if (middleComputerY - middleBallY < -(ch * 0.1)) {
+                computerY += ch * 0.009;
             }
         } else if (ballX <= cw / 2 && ballX > racketWidth + playerX) {
             if (middleComputerY - middleBallY > ch * 0.2) {
