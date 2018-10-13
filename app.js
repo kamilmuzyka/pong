@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Draw player's racket
     function player() {
-        ctx.fillStyle = "#FFFFFF";
+        ctx.fillStyle = gameData.playerColor;
         ctx.fillRect(playerX, playerY, racketWidth, racketHeight);
     }
 
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Draw computer's racket
     function computer() {
-        ctx.fillStyle = "#FFFFFF";
+        ctx.fillStyle = gameData.computerColor;
         ctx.fillRect(computerX, computerY, racketWidth, racketHeight);
     }
 
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Handle Menu (Event Bubbling)
     function handleMenu(e) {
-        if (e.target.tagName === "A") {
+        if (e.target.classList.contains('navigation__link')) {
             const fn = e.target.dataset.fn;
             if (fn === "start") {
                 start();
@@ -233,10 +233,24 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (fn === "pause") {
                 pause();
             }
+        } else if (e.target.classList.contains('color-input')) {
+            e.target.addEventListener('change', updateColors);
         }
     }
 
     menu.addEventListener('click', handleMenu);
+
+    // Update colors
+    function updateColors() {
+        const color = this.value;
+        if (this.dataset.color === "player") {
+            gameData.playerColor = color;
+            updateLocalStorage();
+        } else {
+            gameData.computerColor = color;
+            updateLocalStorage();
+        }
+    }
 
     // Handle ESC
     function handleEscape(e) {
@@ -264,7 +278,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const gameData = JSON.parse(localStorage.getItem('gameData')) || {
         totalGoals: 0,
         topGoals: 0,
-        topDominance: [0, 0, 0]
+        topDominance: [0, 0, 0],
+        playerColor: '#FFFFFF',
+        computerColor: '#FFFFFF'
     }
 
     // Update local storage
@@ -394,6 +410,11 @@ document.addEventListener('DOMContentLoaded', function () {
         menu.innerHTML = `
             <div class="menu__window ${opaque}" data-window="settings">
                 <h2 class="heading">Settings</h2>
+                <ul>
+                    <li>Colors:</li>
+                    <li>Player <input  class="color-input" type="color" value=${gameData.playerColor} data-fn="changeSettings" data-color="player"></li>
+                    <li>Computer <input  class="color-input" type="color" value=${gameData.computerColor} data-fn="changeSettings" data-color="computer"></li>
+                </ul>
                 <ul class="navigation">
                     <li class="navigation__item"><a class="navigation__link" data-fn=${backTo} href="#">Exit</a></li>
                 </ul>
