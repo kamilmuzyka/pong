@@ -54,12 +54,17 @@ document.addEventListener('DOMContentLoaded', function () {
             setBallFactors();
         } else if (ballX + ballSize >= cw) {
             userScore++;
-            gameData.goals++;
-            if (userScore - computerScore > gameData.difference[2]) {
-                gameData.difference[0] = userScore;
-                gameData.difference[1] = computerScore;
-                gameData.difference[2] = userScore - computerScore;
+            gameData.totalGoals++;
+            if (userScore - computerScore > gameData.topDominance[2]) {
+                gameData.topDominance[0] = userScore;
+                gameData.topDominance[1] = computerScore;
+                gameData.topDominance[2] = userScore - computerScore;
             }
+
+            if (userScore > gameData.topGoals) {
+                gameData.topGoals = userScore;
+            }
+
             updateLocalStorage();
             setBallFactors();
         }
@@ -235,7 +240,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Handle ESC
     function handleEscape(e) {
-        if (e.keyCode === 27 && gameStatus === "playing") {
+        if (e.keyCode === 27 && !gameStarted) {
+            main();
+        } else if (e.keyCode === 27 && gameStatus === "playing") {
             pause();
         } else if (e.keyCode === 27 && gameStatus === "paused") {
             resume();
@@ -252,9 +259,12 @@ document.addEventListener('DOMContentLoaded', function () {
     let gameInterval;
     let gameStatus;
     let gameStarted = false;
+
+    // Game scores data
     const gameData = JSON.parse(localStorage.getItem('gameData')) || {
-        goals: 0,
-        difference: [0, 0, 0]
+        totalGoals: 0,
+        topGoals: 0,
+        topDominance: [0, 0, 0]
     }
 
     // Update local storage
@@ -360,8 +370,9 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="menu__window ${opaque}" data-window="scores">
                 <h2 class="heading">Scores</h2>
                 <ul class="scores">
-                    <li>Total Goals: ${gameData.goals}</li>
-                    <li>The Highest Difference: ${gameData.difference[2]} (${gameData.difference[0]} to ${gameData.difference[1]})</li>
+                    <li>Total Goals: ${gameData.totalGoals}</li>
+                    <li>Top Goals: ${gameData.topGoals}</li>
+                    <li>Top Dominance: ${gameData.topDominance[2]} (${gameData.topDominance[0]} to ${gameData.topDominance[1]})</li>
                 </ul>
                 <ul class="navigation">
                     <li class="navigation__item"><a class="navigation__link" data-fn=${backTo} href="#">Exit</a></li>
